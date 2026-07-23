@@ -1,0 +1,64 @@
+# Environment configuration for the inverted pendulum adaptive-PID task.
+# Loaded and validated by adaptive_pid.utils.config.load_env_config -- any
+# key typo here fails fast at startup with a clear error rather than being
+# silently ignored.
+
+dt_inner: 0.01          # s, inner PID control loop / physics step
+outer_loop_ratio: 10    # gain-scheduling (RL) decisions happen every N inner steps
+episode_seconds: 5.0
+theta_fail: 1.2         # rad (~69 deg); episode terminates early (large penalty) if |theta| exceeds this
+settle_epsilon: 0.05    # rad, "settled" band for settling-time reward/metrics (~2.9 deg)
+
+# Ziegler-Nichols-derived initial gains, computed by running
+# scripts/autotune_zn.py against the *actual* nonlinear MuJoCo plant (not a
+# linearized approximation) -- see configs/training/baselines.yaml for the
+# full autotune result (Ku, Tu). These seed K_0 for every training/eval
+# episode: the RL agent starts exploration from a genuinely stable point
+# rather than from zero-gain instability (docs/architecture.md Section 6).
+initial_gains:
+  kp: 5.529113924050632
+  ki: 14.268681094324212
+  kd: 0.535632911392405
+
+nominal_plant:
+  mass: 0.3
+  length: 0.5
+  damping: 0.05
+  gravity: 9.81
+  actuator_gain: 1.0
+  inertia_extra: 0.0
+
+limits:
+  kp_min: 0.5
+  kp_max: 30.0
+  ki_min: 0.0
+  ki_max: 15.0
+  kd_min: 0.0
+  kd_max: 8.0
+  kp_rate_max: 5.0    # max |dKp| per second of outer-loop time
+  ki_rate_max: 2.0
+  kd_rate_max: 1.0
+  u_max: 15.0          # N*m, matches actuator ctrlrange in the MuJoCo XML
+  integral_max: 5.0
+
+reward_weights:
+  w_tracking: 1.0
+  w_overshoot: 0.5
+  w_settling: 0.3
+  w_oscillation: 0.2
+  w_energy: 0.05
+  w_gain_smoothness: 0.1
+  w_saturation: 0.2
+  fall_penalty: 50.0
+
+randomization:
+  mass_range: [0.15, 0.6]
+  length_range: [0.35, 0.65]
+  damping_range: [0.01, 0.15]
+  actuator_gain_range: [0.7, 1.0]
+  inertia_extra_range: [0.0, 0.02]
+  disturbance_prob_per_step: 0.02
+  disturbance_torque_range: [-3.0, 3.0]
+  theta_noise_std_range: [0.0, 0.01]
+  theta_dot_noise_std_range: [0.0, 0.02]
+  battery_voltage_droop_range: [0.85, 1.0]

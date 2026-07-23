@@ -1,0 +1,31 @@
+# SAC hyperparameters (Stable-Baselines3).
+# Off-policy, entropy-regularized: typically higher asymptotic performance
+# on continuous control and better suited to the smooth, small-magnitude
+# gain adjustments this task rewards -- see docs/mdp_design.md Section 6.
+
+env_config: configs/env/pendulum.yaml
+algo: sac
+total_timesteps: 1_000_000
+n_envs: 4               # SAC is off-policy; fewer parallel envs needed than PPO
+seed: 0
+
+policy: MlpPolicy
+policy_kwargs:
+  net_arch: [256, 256]
+
+learning_rate: 3.0e-4
+buffer_size: 500_000
+learning_starts: 5_000
+batch_size: 256
+tau: 0.005              # target network soft-update rate
+gamma: 0.99
+train_freq: 1
+gradient_steps: 1
+ent_coef: auto           # automatic entropy temperature tuning (standard SAC practice)
+
+eval_freq: 20_000
+n_eval_episodes: 10
+checkpoint_freq: 100_000
+
+log_dir: runs/sac
+tensorboard_log: runs/sac/tensorboard

@@ -1,0 +1,35 @@
+# PPO hyperparameters (Stable-Baselines3).
+# On-policy: no replay buffer, generally more stable but less sample
+# efficient than SAC -- see docs/mdp_design.md Section 6 for the
+# PPO-vs-SAC comparison rationale.
+
+env_config: configs/env/pendulum.yaml
+algo: ppo
+total_timesteps: 2_000_000
+n_envs: 8
+seed: 0
+
+policy: MlpPolicy
+policy_kwargs:
+  net_arch:
+    pi: [128, 128]
+    vf: [128, 128]
+  activation_fn: tanh
+
+learning_rate: 3.0e-4
+n_steps: 1024          # per-env rollout length before each update
+batch_size: 256
+n_epochs: 10
+gamma: 0.99
+gae_lambda: 0.95
+clip_range: 0.2
+ent_coef: 0.005        # small entropy bonus: encourages exploring gain-adjustment magnitude, not just direction
+vf_coef: 0.5
+max_grad_norm: 0.5
+
+eval_freq: 20_000       # env steps between evaluation rollouts during training
+n_eval_episodes: 10
+checkpoint_freq: 100_000
+
+log_dir: runs/ppo
+tensorboard_log: runs/ppo/tensorboard

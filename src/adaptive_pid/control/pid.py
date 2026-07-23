@@ -56,6 +56,14 @@ class PIDController:
     def gains(self) -> PIDGains:
         return self._gains
 
+    @property
+    def integral_error(self) -> float:
+        """Current accumulated (clamped) integral error. Exposed as a public
+        property specifically because the RL observation vector
+        (envs.gym_env._build_observation) needs it directly, per
+        docs/mdp_design.md Section 2."""
+        return self._state.integral
+
     def set_gains(self, gains: PIDGains) -> None:
         """Update the active gains without resetting error history.
 

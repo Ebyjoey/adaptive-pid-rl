@@ -1,0 +1,52 @@
+<mujoco model="inverted_pendulum_pivot">
+  <!--
+    Torque-actuated inverted pendulum on a fixed pivot (not a cart-pole).
+    theta = 0 corresponds to the upright equilibrium (unstable), matching the
+    convention used throughout adaptive_pid.envs and docs/mdp_design.md.
+
+    Physical parameters here (mass, length, damping) are NOMINAL values.
+    Actual per-episode values are set at runtime by
+    adaptive_pid.envs.domain_randomization.DomainRandomizer, which overwrites
+    body mass / joint damping / actuator gain via the MuJoCo Python bindings
+    (model.body_mass[...], model.dof_damping[...], etc.) rather than by
+    editing this XML, so a single compiled model is reused across the whole
+    randomization distribution instead of recompiling per episode.
+  -->
+  <compiler angle="radian" inertiafromgeom="true"/>
+  <option timestep="0.01" gravity="0 0 -9.81" integrator="RK4"/>
+
+  <default>
+    <joint damping="0.05" limited="false"/>
+    <geom rgba="0.2 0.5 0.8 1" contype="0" conaffinity="0"/>
+  </default>
+
+  <worldbody>
+    <light diffuse="0.6 0.6 0.6" pos="0 0 3" dir="0 0 -1"/>
+    <geom name="floor" type="plane" size="1 1 0.1" rgba="0.9 0.9 0.9 1" pos="0 0 -0.6"/>
+
+    <!-- Fixed pivot base (visual only, no dof) -->
+    <body name="base" pos="0 0 0">
+      <geom name="pivot_mount" type="cylinder" size="0.03 0.05" pos="0 0 -0.05" rgba="0.3 0.3 0.3 1"/>
+
+      <!-- Pendulum arm: hinge about Y axis, theta measured from +Z (upright) -->
+      <body name="pole" pos="0 0 0">
+        <joint name="pivot" type="hinge" axis="0 1 0" pos="0 0 0" damping="0.05"/>
+        <geom name="pole_geom" type="capsule" fromto="0 0 0 0 0 0.5" size="0.02" mass="0.2"/>
+        <geom name="tip_mass" type="sphere" pos="0 0 0.5" size="0.045" mass="0.3"/>
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <!-- Direct torque control at the pivot; gear=1 nominal, actuator degradation
+         is applied at runtime by scaling the commanded torque in the plant
+         wrapper (adaptive_pid.envs.pendulum_plant), not by editing gear here,
+         so degradation can vary continuously within an episode. -->
+    <motor name="pivot_motor" joint="pivot" gear="1" ctrllimited="true" ctrlrange="-15 15"/>
+  </actuator>
+
+  <sensor>
+    <jointpos name="theta_sensor" joint="pivot"/>
+    <jointvel name="theta_dot_sensor" joint="pivot"/>
+  </sensor>
+</mujoco>
