@@ -1,0 +1,17 @@
+# Core numerical / RL stack
+numpy>=1.24,<2.0
+pyyaml>=6.0
+gymnasium>=0.29
+stable-baselines3>=2.2
+torch>=2.1
+mujoco>=3.1
+
+# Analysis / plotting
+matplotlib>=3.7
+pandas>=2.0
+tensorboard>=2.14
+scipy>=1.11
+
+# Testing
+pytest>=7.4
+pytest-cov>=4.1

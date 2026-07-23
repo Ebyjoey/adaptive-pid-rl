@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adaptive-pid-rl"
+version = "0.1.0"
+description = "Adaptive PID Gain Scheduling Using Deep Reinforcement Learning"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Robotics Software Intern Candidate" }]
+
+dependencies = [
+    "numpy>=1.24",
+    "pyyaml>=6.0",
+    "gymnasium>=0.29",
+    "stable-baselines3>=2.2",
+    "torch>=2.1",
+    "mujoco>=3.1",
+    "matplotlib>=3.7",
+    "pandas>=2.0",
+    "tensorboard>=2.14",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "ruff>=0.4",
+    "mypy>=1.8",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "slow: marks tests that run full MuJoCo/SB3 simulations (deselect with '-m \"not slow\"')",
+    "simulation: end-to-end simulation tests requiring MuJoCo",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
