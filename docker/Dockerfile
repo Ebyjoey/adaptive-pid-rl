@@ -28,8 +28,8 @@ WORKDIR /workspace
 # Install the Python package (and its pinned dependencies) first, in its own
 # layer, so that iterating on application code (copied below) doesn't bust
 # the dependency-install Docker layer cache on every rebuild.
-COPY pyproject.toml requirements.txt /workspace/
-RUN pip3 install --no-cache-dir -r requirements.txt
+COPY pyproject.toml /workspace/
+RUN pip3 install --no-cache-dir -e /workspace
 
 COPY . /workspace/
 RUN pip3 install --no-cache-dir -e /workspace
