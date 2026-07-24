@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>adaptive_pid_ros2</name>
+  <version>0.1.0</version>
+  <description>
+    ROS2 Humble node graph for online adaptive PID gain scheduling: plant,
+    reference, PID controller, RL agent, disturbance, logging, and
+    visualization nodes. Reuses the same InvertedPendulumPlant/PIDController
+    implementation as the training environment (see the adaptive_pid Python
+    package, installed separately via pip) so sim and ROS2 physics never
+    diverge -- see docs/architecture.md.
+  </description>
+  <maintainer email="engineer@example.com">Robotics Software Intern Candidate</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>ament_python</buildtool_depend>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>adaptive_pid_msgs</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

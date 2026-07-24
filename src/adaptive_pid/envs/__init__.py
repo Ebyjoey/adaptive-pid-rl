@@ -18,9 +18,9 @@ from adaptive_pid.envs.pendulum_plant import InvertedPendulumPlant
 from adaptive_pid.envs.reference_trajectory import ReferenceTrajectory, sample_reference_trajectory
 
 __all__ = [
+    "DomainRandomizer",
     "GymPIDGainEnv",
     "InvertedPendulumPlant",
-    "DomainRandomizer",
     "RandomizationRanges",
     "ReferenceTrajectory",
     "sample_reference_trajectory",

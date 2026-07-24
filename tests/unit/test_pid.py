@@ -104,7 +104,7 @@ class TestGainUpdates:
         pid = make_pid(kp=0.0, ki=1.0, kd=1.0, dt=1.0)
         pid.step(5.0)
         pid.reset()
-        u, ie, de = pid.step(5.0)
+        _u, ie, de = pid.step(5.0)
         assert ie == pytest.approx(5.0)
         assert de == pytest.approx(0.0)  # no history after reset -> no derivative spike
 

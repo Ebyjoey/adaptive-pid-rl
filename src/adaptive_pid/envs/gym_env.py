@@ -11,7 +11,7 @@ rule in docs/architecture.md.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, ClassVar
 
 import gymnasium as gym
 import numpy as np
@@ -37,7 +37,7 @@ class GymPIDGainEnv(gym.Env):
     inner-loop PID controller regulating a randomized inverted pendulum.
     """
 
-    metadata = {"render_modes": []}
+    metadata: ClassVar[dict[str, list]] = {"render_modes": []}
 
     def __init__(
         self,
@@ -75,7 +75,7 @@ class GymPIDGainEnv(gym.Env):
         self.observation_space = spaces.Box(low=-np.inf, high=np.inf, shape=(OBS_DIM,), dtype=np.float32)
         self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(ACTION_DIM,), dtype=np.float32)
 
-        self._max_inner_steps = int(round(env_config.episode_seconds / env_config.dt_inner))
+        self._max_inner_steps = round(env_config.episode_seconds / env_config.dt_inner)
         self._theta_noise_std = 0.0
         self._theta_dot_noise_std = 0.0
         self._inner_step_count = 0

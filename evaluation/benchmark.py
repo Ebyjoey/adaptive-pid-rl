@@ -20,7 +20,6 @@ import pandas as pd
 from adaptive_pid.envs.gym_env import GymPIDGainEnv
 from adaptive_pid.utils.config import load_env_config, load_yaml
 from adaptive_pid.utils.logging import get_logger
-from adaptive_pid.utils.types import EpisodeStats
 from evaluation.metrics import compute_rollout_metrics
 from evaluation.policies import FixedGainPolicy, GainPolicy, SB3GainPolicy
 from evaluation.rollout import run_episode

@@ -35,7 +35,7 @@ def simulate_proportional_step_response(
     callback ``find_ultimate_gain`` needs (see control/ziegler_nichols.py).
     """
     plant.reset(initial_theta=initial_theta, initial_theta_dot=0.0)
-    n_steps = int(round(duration_s / dt))
+    n_steps = round(duration_s / dt)
     thetas = np.zeros(n_steps)
     for i in range(n_steps):
         state = plant.get_state()

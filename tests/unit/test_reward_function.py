@@ -92,23 +92,23 @@ class TestSaturationTerm:
 
 class TestComputeReward:
     def _base_kwargs(self, **overrides):
-        base = dict(
-            error=0.0,
-            theta=0.0,
-            reference=0.0,
-            reference_is_step=True,
-            derivative_error=0.0,
-            prev_derivative_error=0.0,
-            control_effort=0.0,
-            current_gains=PIDGains(1.0, 0.0, 0.0),
-            previous_gains=PIDGains(1.0, 0.0, 0.0),
-            u_max=10.0,
-            epsilon_settle=0.05,
-            time_since_reference_change=0.1,
-            expected_settle_time=2.0,
-            fell=False,
-            weights=RewardWeights(),
-        )
+        base = {
+            "error": 0.0,
+            "theta": 0.0,
+            "reference": 0.0,
+            "reference_is_step": True,
+            "derivative_error": 0.0,
+            "prev_derivative_error": 0.0,
+            "control_effort": 0.0,
+            "current_gains": PIDGains(1.0, 0.0, 0.0),
+            "previous_gains": PIDGains(1.0, 0.0, 0.0),
+            "u_max": 10.0,
+            "epsilon_settle": 0.05,
+            "time_since_reference_change": 0.1,
+            "expected_settle_time": 2.0,
+            "fell": False,
+            "weights": RewardWeights(),
+        }
         base.update(overrides)
         return base
 
@@ -119,7 +119,7 @@ class TestComputeReward:
 
     def test_fall_gives_exactly_negative_fall_penalty_and_ignores_other_terms(self):
         weights = RewardWeights(fall_penalty=42.0)
-        reward, terms = compute_reward(**self._base_kwargs(error=100.0, control_effort=100.0, fell=True, weights=weights))
+        reward, _terms = compute_reward(**self._base_kwargs(error=100.0, control_effort=100.0, fell=True, weights=weights))
         assert reward == pytest.approx(-42.0)
 
     def test_reward_is_more_negative_with_larger_error(self):

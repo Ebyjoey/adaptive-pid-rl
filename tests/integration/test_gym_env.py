@@ -93,7 +93,7 @@ class TestStepContract:
         terminated = truncated = False
         steps = 0
         while not (terminated or truncated) and steps < 1000:
-            obs, reward, terminated, truncated, info = env.step(np.zeros(ACTION_DIM, dtype=np.float32))
+            _obs, _reward, terminated, truncated, _info = env.step(np.zeros(ACTION_DIM, dtype=np.float32))
             steps += 1
         assert truncated is True
         assert terminated is False
@@ -119,7 +119,7 @@ class TestStepContract:
             terminated = truncated = False
             steps = 0
             while not (terminated or truncated):
-                obs, reward, terminated, truncated, info = env.step(np.zeros(ACTION_DIM, dtype=np.float32))
+                _obs, _reward, terminated, truncated, _info = env.step(np.zeros(ACTION_DIM, dtype=np.float32))
                 steps += 1
                 if steps > 1000:
                     break  # safety valve against a wiring bug causing an infinite loop
@@ -131,7 +131,7 @@ class TestStepContract:
         env = make_env()
         env.reset(seed=1)
         for _ in range(20):
-            obs, reward, terminated, truncated, info = env.step(np.zeros(ACTION_DIM, dtype=np.float32))
+            obs, reward, terminated, truncated, _info = env.step(np.zeros(ACTION_DIM, dtype=np.float32))
             assert np.isfinite(reward)
             assert np.all(np.isfinite(obs))
             if terminated or truncated:
@@ -158,7 +158,7 @@ class TestStepContract:
         while not (terminated or truncated) and steps < 100:
             # Repeatedly slam Kp toward its minimum -- a near-zero-gain PID
             # on an unstable inverted pendulum should not be able to hold it up.
-            obs, reward, terminated, truncated, info = env.step(np.array([-1.0, 0.0, -1.0], dtype=np.float32))
+            _obs, _reward, terminated, _truncated, _info = env.step(np.array([-1.0, 0.0, -1.0], dtype=np.float32))
             steps += 1
         assert terminated is True
 

@@ -7,13 +7,13 @@ from adaptive_pid.utils.types import ControlLimits, PIDGains
 
 
 def make_limits(**overrides) -> ControlLimits:
-    defaults = dict(
-        kp_min=0.0, kp_max=10.0,
-        ki_min=0.0, ki_max=5.0,
-        kd_min=0.0, kd_max=2.0,
-        kp_rate_max=1.0, ki_rate_max=0.5, kd_rate_max=0.2,
-        u_max=100.0, integral_max=50.0,
-    )
+    defaults = {
+        "kp_min": 0.0, "kp_max": 10.0,
+        "ki_min": 0.0, "ki_max": 5.0,
+        "kd_min": 0.0, "kd_max": 2.0,
+        "kp_rate_max": 1.0, "ki_rate_max": 0.5, "kd_rate_max": 0.2,
+        "u_max": 100.0, "integral_max": 50.0,
+    }
     defaults.update(overrides)
     return ControlLimits(**defaults)
 

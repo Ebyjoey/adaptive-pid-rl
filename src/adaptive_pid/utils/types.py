@@ -36,7 +36,7 @@ class PIDGains:
     def as_array(self) -> tuple[float, float, float]:
         return (self.kp, self.ki, self.kd)
 
-    def __sub__(self, other: "PIDGains") -> "PIDGains":
+    def __sub__(self, other: PIDGains) -> PIDGains:
         return PIDGains(self.kp - other.kp, self.ki - other.ki, self.kd - other.kd)
 
     def norm(self) -> float:

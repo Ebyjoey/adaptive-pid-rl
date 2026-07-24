@@ -20,7 +20,7 @@ actuator degradation, sensor noise, and battery voltage changes":
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
@@ -52,7 +52,7 @@ class RandomizationRanges:
     battery_voltage_droop_range: tuple[float, float] = (0.85, 1.0)  # multiplies actuator_gain further, per-episode drift
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "RandomizationRanges":
+    def from_dict(cls, data: dict[str, Any]) -> RandomizationRanges:
         """Build from a raw YAML dict, tolerating missing keys (falls back
         to dataclass defaults) but rejecting unknown keys (typo protection).
         """

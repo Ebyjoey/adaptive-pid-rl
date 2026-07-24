@@ -1,0 +1,30 @@
+# Build/run the full stack. Build context is the repository root (not
+# docker/) since the Dockerfile needs access to pyproject.toml, src/,
+# ros2_ws/, etc.
+#
+# Usage (from the repository root):
+#   docker compose -f docker/docker-compose.yml build
+#   docker compose -f docker/docker-compose.yml run --rm adaptive-pid bash
+#   docker compose -f docker/docker-compose.yml run --rm adaptive-pid \
+#       python -m training.train_ppo --config configs/training/ppo.yaml
+#   docker compose -f docker/docker-compose.yml run --rm adaptive-pid \
+#       ros2 launch adaptive_pid_ros2 adaptive_pid_system.launch.py
+
+services:
+  adaptive-pid:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: adaptive-pid-rl:latest
+    container_name: adaptive-pid-rl
+    volumes:
+      # Mount runs/ and logs/ from the host so trained models and rosbags
+      # survive container recreation, without baking large binary artifacts
+      # into the image itself.
+      - ../runs:/workspace/runs
+      - ../logs:/workspace/logs
+      - ../assets:/workspace/assets
+    environment:
+      - PYTHONUNBUFFERED=1
+    tty: true
+    stdin_open: true
