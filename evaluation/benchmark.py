@@ -163,12 +163,17 @@ def run_benchmark(
 
 
 def summarize(df: pd.DataFrame) -> pd.DataFrame:
-    """Aggregate per-episode rows into a mean +/- std summary table per policy."""
+    """Aggregate per-episode rows into a mean/std summary table per policy,
+    with clean flat column names (e.g. ``rmse_mean``, ``rmse_std``) rather
+    than a MultiIndex or tuple-labeled columns -- those serialize to
+    unreadable strings like ``"('rmse', 'mean')"`` when written to CSV,
+    which is not an acceptable deliverable format for a benchmark table."""
     numeric_cols = ["rmse", "rise_time_s", "settling_time_s", "overshoot_pct", "steady_state_error",
                      "control_effort_rms", "energy", "total_reward"]
-    summary = df.groupby("policy")[numeric_cols].agg(["mean", "std"])
+    grouped = df.groupby("policy")[numeric_cols].agg(["mean", "std"])
+    grouped.columns = [f"{col}_{stat}" for col, stat in grouped.columns]
     fall_rate = df.groupby("policy")["fell"].mean().rename("fall_rate")
-    summary = pd.concat([summary, fall_rate], axis=1)
+    summary = pd.concat([grouped, fall_rate], axis=1)
     return summary
 
 
@@ -199,7 +204,7 @@ def main() -> None:
     logger.info(f"Wrote summary table to {summary_path}")
 
     print("\n=== Benchmark Summary (per policy) ===")
-    with pd.option_context("display.max_columns", None, "display.width", 160):
+    with pd.option_context("display.max_columns", None, "display.width", 200):
         print(summary.round(3).to_string())
 
 

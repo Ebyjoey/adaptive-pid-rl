@@ -106,12 +106,12 @@ def plot_tracking_response(
 def plot_benchmark_comparison(summary_df: pd.DataFrame, metric_col: str, ylabel: str, title: str, output_path: str) -> None:
     """Bar chart comparing one metric's mean +/- std across all evaluated
     policies -- used for RMSE, overshoot, settling time, energy, etc.
-    ``summary_df`` is expected in the (mean, std)-per-metric tuple-column
-    format produced by ``evaluation.benchmark.summarize``.
+    ``summary_df`` is expected in the flat ``{metric}_mean``/``{metric}_std``
+    column format produced by ``evaluation.benchmark.summarize``.
     """
     policies = list(summary_df.index)
-    means = [summary_df.loc[p, (metric_col, "mean")] for p in policies]
-    stds = [summary_df.loc[p, (metric_col, "std")] for p in policies]
+    means = [summary_df.loc[p, f"{metric_col}_mean"] for p in policies]
+    stds = [summary_df.loc[p, f"{metric_col}_std"] for p in policies]
     colors = [_COLORS.get(p, "tab:gray") for p in policies]
 
     fig, ax = plt.subplots()

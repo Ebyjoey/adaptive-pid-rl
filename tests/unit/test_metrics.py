@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from evaluation.metrics import (
@@ -13,6 +14,7 @@ from evaluation.metrics import (
     compute_settling_time,
     compute_steady_state_error,
 )
+from evaluation.plots import plot_benchmark_comparison, plot_fall_rate_comparison
 
 
 class TestRMSE:
@@ -108,7 +110,55 @@ class TestSteadyStateError:
         assert compute_steady_state_error(np.array([])) == pytest.approx(0.0)
 
 
-class TestComputeRolloutMetrics:
+class TestBenchmarkComparisonPlots:
+    def test_plot_benchmark_comparison_against_summarize_output(self, tmp_path):
+        """Regression test: summarize() produces tuple-labeled columns (via
+        pd.concat of a MultiIndex-agg frame with a flat Series), not a true
+        2-level MultiIndex -- plot_benchmark_comparison must access columns
+        in a way that actually works against that real shape, not an
+        idealized MultiIndex .loc[p, (col, 'mean')] access pattern."""
+        from evaluation.benchmark import summarize
+
+        df = pd.DataFrame(
+            {
+                "policy": ["A", "A", "B", "B"],
+                "rmse": [0.1, 0.2, 0.3, 0.4],
+                "rise_time_s": [0.5, 0.6, 0.7, 0.8],
+                "settling_time_s": [1.0, 1.1, 1.2, 1.3],
+                "overshoot_pct": [5.0, 6.0, 7.0, 8.0],
+                "steady_state_error": [0.01, 0.02, 0.03, 0.04],
+                "control_effort_rms": [1.0, 1.1, 1.2, 1.3],
+                "energy": [10.0, 11.0, 12.0, 13.0],
+                "total_reward": [-10.0, -11.0, -12.0, -13.0],
+                "fell": [False, False, True, True],
+            }
+        )
+        summary = summarize(df)
+        output_path = tmp_path / "rmse.png"
+        plot_benchmark_comparison(summary, "rmse", "RMSE (rad)", "Test", str(output_path))
+        assert output_path.exists()
+
+    def test_plot_fall_rate_comparison_against_summarize_output(self, tmp_path):
+        from evaluation.benchmark import summarize
+
+        df = pd.DataFrame(
+            {
+                "policy": ["A", "A", "B", "B"],
+                "rmse": [0.1, 0.2, 0.3, 0.4],
+                "rise_time_s": [0.5, 0.6, 0.7, 0.8],
+                "settling_time_s": [1.0, 1.1, 1.2, 1.3],
+                "overshoot_pct": [5.0, 6.0, 7.0, 8.0],
+                "steady_state_error": [0.01, 0.02, 0.03, 0.04],
+                "control_effort_rms": [1.0, 1.1, 1.2, 1.3],
+                "energy": [10.0, 11.0, 12.0, 13.0],
+                "total_reward": [-10.0, -11.0, -12.0, -13.0],
+                "fell": [False, True, True, True],
+            }
+        )
+        summary = summarize(df)
+        output_path = tmp_path / "fall_rate.png"
+        plot_fall_rate_comparison(summary, str(output_path))
+        assert output_path.exists()
     def test_produces_all_fields_without_error(self):
         times = np.arange(0, 2.0, 0.01)
         theta = np.minimum(times, 1.0)  # ramps to 1.0 then holds

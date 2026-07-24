@@ -5,6 +5,11 @@ Usage
 -----
     python -m training.train_sac --config configs/training/sac.yaml
     python -m training.train_sac --config configs/training/sac.yaml --total-timesteps 4000 --n-envs 1  # smoke test
+
+Resuming a long run across multiple sessions (see train_ppo.py for the same
+pattern applied to PPO):
+    python -m training.train_sac --config configs/training/sac.yaml --total-timesteps 20000
+    python -m training.train_sac --config configs/training/sac.yaml --total-timesteps 20000 --resume
 """
 
 from __future__ import annotations
@@ -14,6 +19,7 @@ from pathlib import Path
 
 from stable_baselines3 import SAC
 from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback, EvalCallback
+from stable_baselines3.common.vec_env import VecNormalize
 
 from adaptive_pid.utils.config import load_yaml
 from adaptive_pid.utils.logging import get_logger
@@ -28,6 +34,12 @@ def main() -> None:
     parser.add_argument("--config", type=str, default="configs/training/sac.yaml")
     parser.add_argument("--total-timesteps", type=int, default=None)
     parser.add_argument("--n-envs", type=int, default=None)
+    parser.add_argument(
+        "--resume", action="store_true",
+        help="Load log_dir/final_model.zip + vecnormalize.pkl and train --total-timesteps additional "
+             "steps on top, instead of starting from scratch (including the replay buffer's warm state "
+             "via SB3's model.load, though the replay buffer contents themselves are not persisted)."
+    )
     args = parser.parse_args()
 
     cfg = load_yaml(args.config)
@@ -43,26 +55,37 @@ def main() -> None:
     )
     eval_env = build_training_env(cfg["env_config"], n_envs=1, seed=cfg["seed"] + 1000, norm_reward=False)
 
-    # ent_coef in SB3's SAC accepts the literal string "auto" directly (it is
-    # not a Python-object placeholder like PPO's activation_fn), so no
-    # resolution step is needed here -- passed straight through from YAML.
-    model = SAC(
-        cfg["policy"],
-        train_env,
-        learning_rate=cfg["learning_rate"],
-        buffer_size=cfg["buffer_size"],
-        learning_starts=cfg["learning_starts"],
-        batch_size=cfg["batch_size"],
-        tau=cfg["tau"],
-        gamma=cfg["gamma"],
-        train_freq=cfg["train_freq"],
-        gradient_steps=cfg["gradient_steps"],
-        ent_coef=cfg["ent_coef"],
-        policy_kwargs=cfg.get("policy_kwargs", {}),
-        tensorboard_log=cfg["tensorboard_log"],
-        seed=cfg["seed"],
-        verbose=1,
-    )
+    resume_model_path = log_dir / "final_model.zip"
+    resume_vecnorm_path = log_dir / "vecnormalize.pkl"
+    if args.resume:
+        if not resume_model_path.exists():
+            raise FileNotFoundError(
+                f"--resume was given but no checkpoint exists at {resume_model_path}; run without --resume first."
+            )
+        logger.info(f"Resuming from {resume_model_path}")
+        train_env = VecNormalize.load(str(resume_vecnorm_path), train_env.venv)
+        model = SAC.load(str(resume_model_path), env=train_env)
+    else:
+        # ent_coef in SB3's SAC accepts the literal string "auto" directly (it
+        # is not a Python-object placeholder like PPO's activation_fn), so no
+        # resolution step is needed here -- passed straight through from YAML.
+        model = SAC(
+            cfg["policy"],
+            train_env,
+            learning_rate=cfg["learning_rate"],
+            buffer_size=cfg["buffer_size"],
+            learning_starts=cfg["learning_starts"],
+            batch_size=cfg["batch_size"],
+            tau=cfg["tau"],
+            gamma=cfg["gamma"],
+            train_freq=cfg["train_freq"],
+            gradient_steps=cfg["gradient_steps"],
+            ent_coef=cfg["ent_coef"],
+            policy_kwargs=cfg.get("policy_kwargs", {}),
+            tensorboard_log=cfg["tensorboard_log"],
+            seed=cfg["seed"],
+            verbose=1,
+        )
 
     checkpoint_callback = CheckpointCallback(
         save_freq=max(cfg["checkpoint_freq"] // n_envs, 1),
@@ -80,11 +103,13 @@ def main() -> None:
     )
     gain_logging_callback = GainAndRewardTermLoggingCallback(log_freq=1000)
 
-    logger.info(f"Starting SAC training for {total_timesteps} timesteps")
+    logger.info(f"{'Resuming' if args.resume else 'Starting'} SAC training for {total_timesteps} "
+                f"{'additional ' if args.resume else ''}timesteps")
     model.learn(
         total_timesteps=total_timesteps,
         callback=CallbackList([checkpoint_callback, eval_callback, gain_logging_callback]),
         tb_log_name="sac",
+        reset_num_timesteps=not args.resume,
     )
 
     final_model_path = log_dir / "final_model.zip"

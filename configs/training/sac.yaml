@@ -25,7 +25,7 @@ ent_coef: auto           # automatic entropy temperature tuning (standard SAC pr
 
 eval_freq: 20_000
 n_eval_episodes: 10
-checkpoint_freq: 100_000
+checkpoint_freq: 5_000
 
 log_dir: runs/sac
 tensorboard_log: runs/sac/tensorboard
