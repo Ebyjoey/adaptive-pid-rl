@@ -28,7 +28,9 @@ class GainScheduler:
             kd=_clip(kd, self._limits.kd_min, self._limits.kd_max),
         )
 
-    def apply_action(self, current: PIDGains, action: tuple[float, float, float], dt_outer: float) -> PIDGains:
+    def apply_action(
+        self, current: PIDGains, action: tuple[float, float, float], dt_outer: float
+    ) -> PIDGains:
         """Integrate a raw ``[-1, 1]``-scaled action onto the current gains.
 
         ``action`` is expected pre-squashed (e.g. via ``tanh`` in the policy

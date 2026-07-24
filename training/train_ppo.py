@@ -57,9 +57,10 @@ def main() -> None:
     parser.add_argument("--total-timesteps", type=int, default=None, help="override config's total_timesteps")
     parser.add_argument("--n-envs", type=int, default=None, help="override config's n_envs")
     parser.add_argument(
-        "--resume", action="store_true",
+        "--resume",
+        action="store_true",
         help="Load log_dir/final_model.zip + vecnormalize.pkl and train --total-timesteps additional "
-             "steps on top, instead of starting from scratch."
+        "steps on top, instead of starting from scratch.",
     )
     args = parser.parse_args()
 
@@ -129,8 +130,10 @@ def main() -> None:
     # want true, comparable returns for benchmark reporting.
     gain_logging_callback = GainAndRewardTermLoggingCallback(log_freq=1000)
 
-    logger.info(f"{'Resuming' if args.resume else 'Starting'} PPO training for {total_timesteps} "
-                f"{'additional ' if args.resume else ''}timesteps")
+    logger.info(
+        f"{'Resuming' if args.resume else 'Starting'} PPO training for {total_timesteps} "
+        f"{'additional ' if args.resume else ''}timesteps"
+    )
     model.learn(
         total_timesteps=total_timesteps,
         callback=CallbackList([checkpoint_callback, eval_callback, gain_logging_callback]),
@@ -141,7 +144,9 @@ def main() -> None:
     final_model_path = log_dir / "final_model.zip"
     model.save(str(final_model_path))
     train_env.save(str(log_dir / "vecnormalize.pkl"))
-    logger.info(f"Saved final model to {final_model_path} and VecNormalize stats to {log_dir / 'vecnormalize.pkl'}")
+    logger.info(
+        f"Saved final model to {final_model_path} and VecNormalize stats to {log_dir / 'vecnormalize.pkl'}"
+    )
 
 
 if __name__ == "__main__":

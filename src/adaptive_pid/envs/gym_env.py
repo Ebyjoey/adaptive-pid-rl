@@ -87,7 +87,9 @@ class GymPIDGainEnv(gym.Env):
 
     # -- Gymnasium API -----------------------------------------------------
 
-    def reset(self, *, seed: int | None = None, options: dict[str, Any] | None = None) -> tuple[np.ndarray, dict]:
+    def reset(
+        self, *, seed: int | None = None, options: dict[str, Any] | None = None
+    ) -> tuple[np.ndarray, dict]:
         super().reset(seed=seed)
         if seed is not None:
             self._randomizer.seed(seed)
@@ -118,7 +120,9 @@ class GymPIDGainEnv(gym.Env):
 
         dt_outer = self._config.dt_inner * self._config.outer_loop_ratio
         previous_gains = self._pid.gains
-        new_gains = self._gain_scheduler.apply_action(previous_gains, tuple(float(a) for a in action), dt_outer)
+        new_gains = self._gain_scheduler.apply_action(
+            previous_gains, tuple(float(a) for a in action), dt_outer
+        )
         self._pid.set_gains(new_gains)
 
         total_reward = 0.0

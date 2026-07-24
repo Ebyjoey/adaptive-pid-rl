@@ -9,7 +9,7 @@ description = "Adaptive PID Gain Scheduling Using Deep Reinforcement Learning"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Robotics Software Intern Candidate" }]
+authors = [{ name = "Aby Joseph" }]
 
 dependencies = [
     "numpy>=1.24",
@@ -27,8 +27,12 @@ dependencies = [
 dev = [
     "pytest>=7.4",
     "pytest-cov>=4.1",
-    "ruff>=0.4",
-    "mypy>=1.8",
+    # Pinned exactly (not >=) to match .github/workflows/ci.yml: an
+    # unpinned ruff/mypy lets a new release change default lint/format
+    # rules and silently diverge between a contributor's machine and CI.
+    # Bump both together, intentionally, and re-run `ruff format .` first.
+    "ruff==0.16.0",
+    "mypy==2.3.0",
 ]
 
 [tool.setuptools.packages.find]

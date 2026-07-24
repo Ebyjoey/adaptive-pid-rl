@@ -27,7 +27,9 @@ class ReferenceNode(Node):
 
         self._env_config = load_env_config(env_config_path)
         rng = np.random.default_rng(seed)
-        self._trajectory = sample_reference_trajectory(rng, self._env_config.episode_seconds, max_amplitude=0.5)
+        self._trajectory = sample_reference_trajectory(
+            rng, self._env_config.episode_seconds, max_amplitude=0.5
+        )
 
         self._start_time = self.get_clock().now()
         self._reference_pub = self.create_publisher(Float64, "/reference", 10)

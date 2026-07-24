@@ -50,7 +50,9 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=str, default="configs/env/pendulum.yaml")
     parser.add_argument("--output", type=str, default="configs/training/baselines.yaml")
-    parser.add_argument("--initial-theta", type=float, default=0.15, help="rad, initial perturbation for the ZN search")
+    parser.add_argument(
+        "--initial-theta", type=float, default=0.15, help="rad, initial perturbation for the ZN search"
+    )
     args = parser.parse_args()
 
     env_config = load_env_config(args.config)

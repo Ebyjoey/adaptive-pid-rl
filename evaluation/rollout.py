@@ -35,7 +35,9 @@ class RolloutRecording:
     total_reward: float
 
 
-def run_episode(env: GymPIDGainEnv, policy: GainPolicy, seed: int, deterministic: bool = True) -> RolloutRecording:
+def run_episode(
+    env: GymPIDGainEnv, policy: GainPolicy, seed: int, deterministic: bool = True
+) -> RolloutRecording:
     """Run one full episode of ``policy`` against ``env``, recording one
     sample per outer-loop (RL decision) step -- coarser than the 10ms inner
     physics loop, but sufficient resolution for RMSE, rise time, settling
@@ -45,7 +47,9 @@ def run_episode(env: GymPIDGainEnv, policy: GainPolicy, seed: int, deterministic
     obs, _reset_info = env.reset(seed=seed)
     reference_traj = env.reference_trajectory
     reference_amplitude = float(reference_traj.amplitude)
-    step_time = float(reference_traj.step_change_times[0]) if len(reference_traj.step_change_times) > 0 else 0.0
+    step_time = (
+        float(reference_traj.step_change_times[0]) if len(reference_traj.step_change_times) > 0 else 0.0
+    )
 
     times: list[float] = []
     theta_list: list[float] = []

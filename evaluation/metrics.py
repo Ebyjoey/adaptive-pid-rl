@@ -16,12 +16,12 @@ import numpy as np
 @dataclass
 class RolloutMetrics:
     rmse: float
-    rise_time: float | None       # s, time from 10% to 90% of the first step's amplitude
-    settling_time: float | None   # s, time until |error| stays within settle_epsilon and never leaves again
-    overshoot_pct: float          # % of step amplitude
-    steady_state_error: float     # mean |error| over the final 10% of the episode
+    rise_time: float | None  # s, time from 10% to 90% of the first step's amplitude
+    settling_time: float | None  # s, time until |error| stays within settle_epsilon and never leaves again
+    overshoot_pct: float  # % of step amplitude
+    steady_state_error: float  # mean |error| over the final 10% of the episode
     control_effort_rms: float
-    energy: float                 # sum(u^2 * dt), proxy for energy consumption
+    energy: float  # sum(u^2 * dt), proxy for energy consumption
     fell: bool
 
 
@@ -37,7 +37,9 @@ def compute_energy(control_signal: np.ndarray, dt: float) -> float:
     return float(np.sum(control_signal**2) * dt)
 
 
-def compute_rise_time(theta: np.ndarray, times: np.ndarray, reference_amplitude: float, step_time: float) -> float | None:
+def compute_rise_time(
+    theta: np.ndarray, times: np.ndarray, reference_amplitude: float, step_time: float
+) -> float | None:
     """Time from the reference step's 10% to 90% crossing, for a step (or
     step-like) reference only. Returns ``None`` if the response never
     reaches 90% of the target (rise time is undefined in that case)."""
@@ -88,7 +90,9 @@ def compute_settling_time(
     return float(post_times[last_outside + 1])
 
 
-def compute_overshoot_pct(theta: np.ndarray, reference_amplitude: float, step_time: float, times: np.ndarray) -> float:
+def compute_overshoot_pct(
+    theta: np.ndarray, reference_amplitude: float, step_time: float, times: np.ndarray
+) -> float:
     """Peak overshoot past the reference, as a percentage of the step
     amplitude. Returns 0 for non-step references (amplitude == 0 guard)."""
     if reference_amplitude == 0:

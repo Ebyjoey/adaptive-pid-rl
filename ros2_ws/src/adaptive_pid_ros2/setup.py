@@ -11,10 +11,19 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         ("share/" + package_name + "/launch", ["launch/adaptive_pid_system.launch.py"]),
     ],
-    install_requires=["setuptools", "adaptive-pid-rl"],
+    # Note: the `adaptive_pid` Python package (this repo's src/) is a
+    # required runtime dependency of every node in this package, but it is
+    # intentionally NOT listed here via install_requires: it is not
+    # published to PyPI (only installable as a local editable install), so
+    # declaring it here would make a bare `colcon build` try to resolve a
+    # nonexistent PyPI package and fail in any environment without network
+    # access or a prior `pip install -e .`. Install it explicitly first --
+    # see docker/Dockerfile and ros2_ws/README.md, both of which run
+    # `pip install -e .` from the repo root before building this workspace.
+    install_requires=["setuptools"],
     zip_safe=True,
-    maintainer="Robotics Software Intern Candidate",
-    maintainer_email="engineer@example.com",
+    maintainer="Aby Joseph",
+    maintainer_email="113280731+Ebyjoey@users.noreply.github.com",
     description=(
         "ROS2 Humble node graph for online adaptive PID gain scheduling "
         "(plant, reference, PID controller, RL agent, disturbance, "

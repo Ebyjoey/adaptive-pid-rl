@@ -76,9 +76,7 @@ def load_env_config(path: str | Path) -> EnvConfig:
     try:
         nominal_plant = _build_dataclass(PlantParams, raw["nominal_plant"], path="nominal_plant")
         limits = _build_dataclass(ControlLimits, raw["limits"], path="limits")
-        reward_weights = _build_dataclass(
-            RewardWeights, raw.get("reward_weights", {}), path="reward_weights"
-        )
+        reward_weights = _build_dataclass(RewardWeights, raw.get("reward_weights", {}), path="reward_weights")
     except KeyError as exc:
         raise ConfigError(f"Missing required top-level section {exc} in {path}") from exc
 

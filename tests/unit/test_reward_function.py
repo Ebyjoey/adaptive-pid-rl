@@ -42,19 +42,28 @@ class TestOvershootTerm:
 
 class TestSettlingDeficitTerm:
     def test_no_deficit_before_expected_settle_time(self):
-        assert settling_deficit_term(
-            error=1.0, epsilon_settle=0.05, time_since_reference_change=0.5, expected_settle_time=2.0
-        ) == 0.0
+        assert (
+            settling_deficit_term(
+                error=1.0, epsilon_settle=0.05, time_since_reference_change=0.5, expected_settle_time=2.0
+            )
+            == 0.0
+        )
 
     def test_deficit_after_expected_time_if_still_outside_epsilon(self):
-        assert settling_deficit_term(
-            error=1.0, epsilon_settle=0.05, time_since_reference_change=3.0, expected_settle_time=2.0
-        ) == 1.0
+        assert (
+            settling_deficit_term(
+                error=1.0, epsilon_settle=0.05, time_since_reference_change=3.0, expected_settle_time=2.0
+            )
+            == 1.0
+        )
 
     def test_no_deficit_after_expected_time_if_within_epsilon(self):
-        assert settling_deficit_term(
-            error=0.01, epsilon_settle=0.05, time_since_reference_change=3.0, expected_settle_time=2.0
-        ) == 0.0
+        assert (
+            settling_deficit_term(
+                error=0.01, epsilon_settle=0.05, time_since_reference_change=3.0, expected_settle_time=2.0
+            )
+            == 0.0
+        )
 
 
 class TestOscillationTerm:
@@ -119,7 +128,9 @@ class TestComputeReward:
 
     def test_fall_gives_exactly_negative_fall_penalty_and_ignores_other_terms(self):
         weights = RewardWeights(fall_penalty=42.0)
-        reward, _terms = compute_reward(**self._base_kwargs(error=100.0, control_effort=100.0, fell=True, weights=weights))
+        reward, _terms = compute_reward(
+            **self._base_kwargs(error=100.0, control_effort=100.0, fell=True, weights=weights)
+        )
         assert reward == pytest.approx(-42.0)
 
     def test_reward_is_more_negative_with_larger_error(self):

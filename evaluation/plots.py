@@ -41,7 +41,9 @@ _COLORS = {
 }
 
 
-def plot_learning_curve(timesteps: np.ndarray, episode_rewards: np.ndarray, title: str, output_path: str) -> None:
+def plot_learning_curve(
+    timesteps: np.ndarray, episode_rewards: np.ndarray, title: str, output_path: str
+) -> None:
     """Reward vs. training timesteps, with a rolling mean overlay to make
     the underlying trend visible through per-episode noise."""
     fig, ax = plt.subplots()
@@ -58,7 +60,9 @@ def plot_learning_curve(timesteps: np.ndarray, episode_rewards: np.ndarray, titl
     _save(fig, output_path)
 
 
-def plot_reward_term_breakdown(timesteps: np.ndarray, terms: dict[str, np.ndarray], title: str, output_path: str) -> None:
+def plot_reward_term_breakdown(
+    timesteps: np.ndarray, terms: dict[str, np.ndarray], title: str, output_path: str
+) -> None:
     """Stacked/overlaid view of each (negated, weighted) reward term's
     contribution over training, to diagnose which objective is dominating
     policy behavior at each training stage."""
@@ -73,12 +77,16 @@ def plot_reward_term_breakdown(timesteps: np.ndarray, terms: dict[str, np.ndarra
     _save(fig, output_path)
 
 
-def plot_gain_evolution(times: np.ndarray, kp: np.ndarray, ki: np.ndarray, kd: np.ndarray, title: str, output_path: str) -> None:
+def plot_gain_evolution(
+    times: np.ndarray, kp: np.ndarray, ki: np.ndarray, kd: np.ndarray, title: str, output_path: str
+) -> None:
     """PID gain evolution over a single episode -- the core qualitative
     result this project needs to demonstrate: the agent adapting Kp/Ki/Kd
     online as plant conditions or tracking demands change."""
     fig, axes = plt.subplots(3, 1, sharex=True, figsize=(8, 7))
-    for ax, values, label, color in zip(axes, [kp, ki, kd], ["Kp", "Ki", "Kd"], ["#4c72b0", "#dd8452", "#55a868"]):
+    for ax, values, label, color in zip(
+        axes, [kp, ki, kd], ["Kp", "Ki", "Kd"], ["#4c72b0", "#dd8452", "#55a868"]
+    ):
         ax.plot(times, values, color=color, linewidth=1.8)
         ax.set_ylabel(label)
     axes[-1].set_xlabel("Time (s)")
@@ -103,7 +111,9 @@ def plot_tracking_response(
     _save(fig, output_path)
 
 
-def plot_benchmark_comparison(summary_df: pd.DataFrame, metric_col: str, ylabel: str, title: str, output_path: str) -> None:
+def plot_benchmark_comparison(
+    summary_df: pd.DataFrame, metric_col: str, ylabel: str, title: str, output_path: str
+) -> None:
     """Bar chart comparing one metric's mean +/- std across all evaluated
     policies -- used for RMSE, overshoot, settling time, energy, etc.
     ``summary_df`` is expected in the flat ``{metric}_mean``/``{metric}_std``

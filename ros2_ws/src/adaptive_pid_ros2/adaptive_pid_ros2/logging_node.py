@@ -12,11 +12,10 @@ import csv
 from pathlib import Path
 
 import rclpy
-from rclpy.node import Node
-from std_msgs.msg import Float64
-
 from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
 from adaptive_pid_msgs.msg import PlantState, TrainingStats
+from rclpy.node import Node
+from std_msgs.msg import Float64
 
 
 class LoggingNode(Node):
@@ -31,8 +30,21 @@ class LoggingNode(Node):
         self._file = self._output_path.open("w", newline="")
         self._writer = csv.writer(self._file)
         self._writer.writerow(
-            ["stamp_ns", "topic", "theta", "theta_dot", "control_effort", "disturbance_estimate",
-             "reference", "kp", "ki", "kd", "tracking_error", "reward", "disturbance_torque"]
+            [
+                "stamp_ns",
+                "topic",
+                "theta",
+                "theta_dot",
+                "control_effort",
+                "disturbance_estimate",
+                "reference",
+                "kp",
+                "ki",
+                "kd",
+                "tracking_error",
+                "reward",
+                "disturbance_torque",
+            ]
         )
 
         self._state_sub = self.create_subscription(PlantState, "/state", self._on_state, 10)
@@ -48,8 +60,21 @@ class LoggingNode(Node):
 
     def _on_state(self, msg: PlantState) -> None:
         self._writer.writerow(
-            [self._now_ns(), "state", msg.theta, msg.theta_dot, msg.control_effort, msg.disturbance_estimate,
-             "", "", "", "", "", "", ""]
+            [
+                self._now_ns(),
+                "state",
+                msg.theta,
+                msg.theta_dot,
+                msg.control_effort,
+                msg.disturbance_estimate,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+            ]
         )
         self._file.flush()
 
@@ -65,13 +90,28 @@ class LoggingNode(Node):
 
     def _on_stats(self, msg: TrainingStats) -> None:
         self._writer.writerow(
-            [self._now_ns(), f"training_stats/{msg.source}", "", "", "", "", "", msg.kp, msg.ki, msg.kd,
-             msg.tracking_error, msg.reward, ""]
+            [
+                self._now_ns(),
+                f"training_stats/{msg.source}",
+                "",
+                "",
+                "",
+                "",
+                "",
+                msg.kp,
+                msg.ki,
+                msg.kd,
+                msg.tracking_error,
+                msg.reward,
+                "",
+            ]
         )
         self._file.flush()
 
     def _on_disturbance(self, msg: Float64) -> None:
-        self._writer.writerow([self._now_ns(), "disturbance", "", "", "", "", "", "", "", "", "", "", msg.data])
+        self._writer.writerow(
+            [self._now_ns(), "disturbance", "", "", "", "", "", "", "", "", "", "", msg.data]
+        )
         self._file.flush()
 
     def destroy_node(self) -> bool:

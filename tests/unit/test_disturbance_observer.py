@@ -12,7 +12,11 @@ def make_observer(smoothing_alpha=1.0) -> DisturbanceObserver:
     # which is what most of these tests want; smoothing behavior itself is
     # tested separately below.
     config = DisturbanceObserverConfig(
-        nominal_mass=0.3, nominal_length=0.5, nominal_damping=0.05, gravity=9.81, smoothing_alpha=smoothing_alpha
+        nominal_mass=0.3,
+        nominal_length=0.5,
+        nominal_damping=0.05,
+        gravity=9.81,
+        smoothing_alpha=smoothing_alpha,
     )
     return DisturbanceObserver(config)
 

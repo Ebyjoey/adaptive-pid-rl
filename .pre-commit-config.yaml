@@ -1,0 +1,39 @@
+# Pre-commit hooks for this repository.
+#
+# Install once per clone:
+#   pip install pre-commit
+#   pre-commit install
+#
+# After that, `git commit` will automatically run these hooks and block the
+# commit if ruff would reformat a file or find a lint error -- this is what
+# would have caught the CI failure this config was added in response to
+# (26 files needing `ruff format`) before it ever reached GitHub Actions.
+#
+# Run manually against the whole repo at any time:
+#   pre-commit run --all-files
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Pinned to match the ruff version pinned in .github/workflows/ci.yml
+    # and pyproject.toml's [project.optional-dependencies] dev extra --
+    # keep all three in sync when bumping ruff.
+    rev: v0.16.0
+    hooks:
+      - id: ruff
+        name: ruff lint
+        args: [--fix]
+      - id: ruff-format
+        name: ruff format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        # docker-compose.yaml and CI workflow YAML are standard; ROS2
+        # package.xml files are XML, not YAML, and are unaffected.
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=5000]

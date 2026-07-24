@@ -60,7 +60,9 @@ def build_training_env(
     return vec_env
 
 
-def build_eval_env(env_config_path: str, seed: int, vecnormalize_stats_path: str | None = None) -> VecNormalize:
+def build_eval_env(
+    env_config_path: str, seed: int, vecnormalize_stats_path: str | None = None
+) -> VecNormalize:
     """Build a single-env evaluation environment, optionally loading frozen
     ``VecNormalize`` statistics from a completed training run so evaluation
     observations are normalized identically to how the policy was trained

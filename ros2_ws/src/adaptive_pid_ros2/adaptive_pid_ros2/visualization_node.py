@@ -15,12 +15,11 @@ from __future__ import annotations
 import math
 
 import rclpy
+from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
+from adaptive_pid_msgs.msg import PlantState
 from rclpy.node import Node
 from std_msgs.msg import Float64
 from visualization_msgs.msg import Marker
-
-from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
-from adaptive_pid_msgs.msg import PlantState
 
 
 class VisualizationNode(Node):
@@ -87,8 +86,12 @@ class VisualizationNode(Node):
         self._marker_pub.publish(marker)
 
     def _on_log_timer(self) -> None:
-        gains_str = "Kp=?, Ki=?, Kd=?" if self._latest_gains is None else (
-            f"Kp={self._latest_gains[0]:.2f}, Ki={self._latest_gains[1]:.2f}, Kd={self._latest_gains[2]:.2f}"
+        gains_str = (
+            "Kp=?, Ki=?, Kd=?"
+            if self._latest_gains is None
+            else (
+                f"Kp={self._latest_gains[0]:.2f}, Ki={self._latest_gains[1]:.2f}, Kd={self._latest_gains[2]:.2f}"
+            )
         )
         self.get_logger().info(
             f"theta={self._latest_theta:.3f} rad, reference={self._latest_reference:.3f} rad, {gains_str}"

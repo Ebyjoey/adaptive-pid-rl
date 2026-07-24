@@ -74,7 +74,9 @@ class TestDisturbanceSampling:
 
 class TestSensorNoiseSampling:
     def test_stds_are_within_configured_ranges(self):
-        ranges = RandomizationRanges(theta_noise_std_range=(0.001, 0.005), theta_dot_noise_std_range=(0.002, 0.01))
+        ranges = RandomizationRanges(
+            theta_noise_std_range=(0.001, 0.005), theta_dot_noise_std_range=(0.002, 0.01)
+        )
         randomizer = DomainRandomizer(ranges, seed=0)
         for _ in range(100):
             theta_std, theta_dot_std = randomizer.sample_sensor_noise_std()

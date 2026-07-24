@@ -17,11 +17,16 @@ jobs:
       - name: Install dev dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ruff mypy
+          # Versions pinned deliberately: an unpinned `pip install ruff` lets
+          # a new ruff release change default lint/format rules and break
+          # this job on an otherwise-untouched codebase. Bump these
+          # intentionally (and re-run `ruff format .` locally first) rather
+          # than letting CI drift silently.
+          pip install ruff==0.16.0 mypy==2.3.0
       - name: Ruff lint
-        run: ruff check src/ training/ evaluation/ tests/ scripts/
+        run: ruff check src/ training/ evaluation/ tests/ scripts/ ros2_ws/
       - name: Ruff format check
-        run: ruff format --check src/ training/ evaluation/ tests/ scripts/
+        run: ruff format --check src/ training/ evaluation/ tests/ scripts/ ros2_ws/
       - name: mypy (advisory, non-blocking)
         run: mypy src/adaptive_pid --ignore-missing-imports || true
 

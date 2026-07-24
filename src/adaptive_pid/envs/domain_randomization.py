@@ -45,11 +45,14 @@ class RandomizationRanges:
     inertia_extra_range: tuple[float, float] = (0.0, 0.02)
 
     # Step-level (time-varying) ranges
-    disturbance_prob_per_step: float = 0.02       # probability of a disturbance impulse each inner step
+    disturbance_prob_per_step: float = 0.02  # probability of a disturbance impulse each inner step
     disturbance_torque_range: tuple[float, float] = (-3.0, 3.0)
     theta_noise_std_range: tuple[float, float] = (0.0, 0.01)
     theta_dot_noise_std_range: tuple[float, float] = (0.0, 0.02)
-    battery_voltage_droop_range: tuple[float, float] = (0.85, 1.0)  # multiplies actuator_gain further, per-episode drift
+    battery_voltage_droop_range: tuple[float, float] = (
+        0.85,
+        1.0,
+    )  # multiplies actuator_gain further, per-episode drift
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> RandomizationRanges:
@@ -59,7 +62,9 @@ class RandomizationRanges:
         valid_fields = {f.name for f in cls.__dataclass_fields__.values()}
         unknown = set(data.keys()) - valid_fields
         if unknown:
-            raise ValueError(f"Unknown randomization key(s): {sorted(unknown)}. Valid keys: {sorted(valid_fields)}")
+            raise ValueError(
+                f"Unknown randomization key(s): {sorted(unknown)}. Valid keys: {sorted(valid_fields)}"
+            )
         converted = {k: (tuple(v) if isinstance(v, list) else v) for k, v in data.items()}
         return cls(**converted)
 

@@ -11,7 +11,7 @@
     package, installed separately via pip) so sim and ROS2 physics never
     diverge -- see docs/architecture.md.
   </description>
-  <maintainer email="engineer@example.com">Robotics Software Intern Candidate</maintainer>
+  <maintainer email="113280731+Ebyjoey@users.noreply.github.com">Aby Joseph</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_python</buildtool_depend>

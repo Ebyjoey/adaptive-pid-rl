@@ -159,6 +159,7 @@ class TestBenchmarkComparisonPlots:
         output_path = tmp_path / "fall_rate.png"
         plot_fall_rate_comparison(summary, str(output_path))
         assert output_path.exists()
+
     def test_produces_all_fields_without_error(self):
         times = np.arange(0, 2.0, 0.01)
         theta = np.minimum(times, 1.0)  # ramps to 1.0 then holds

@@ -67,7 +67,9 @@ def try_load_sb3_policy(algo: str, log_dir: str) -> GainPolicy | None:
     model_path = Path(log_dir) / "final_model.zip"
     vecnorm_path = Path(log_dir) / "vecnormalize.pkl"
     if not model_path.exists():
-        logger.warning(f"No trained {algo.upper()} model found at {model_path}; skipping {algo.upper()} in benchmark.")
+        logger.warning(
+            f"No trained {algo.upper()} model found at {model_path}; skipping {algo.upper()} in benchmark."
+        )
         return None
 
     from stable_baselines3 import PPO, SAC
@@ -168,8 +170,16 @@ def summarize(df: pd.DataFrame) -> pd.DataFrame:
     than a MultiIndex or tuple-labeled columns -- those serialize to
     unreadable strings like ``"('rmse', 'mean')"`` when written to CSV,
     which is not an acceptable deliverable format for a benchmark table."""
-    numeric_cols = ["rmse", "rise_time_s", "settling_time_s", "overshoot_pct", "steady_state_error",
-                     "control_effort_rms", "energy", "total_reward"]
+    numeric_cols = [
+        "rmse",
+        "rise_time_s",
+        "settling_time_s",
+        "overshoot_pct",
+        "steady_state_error",
+        "control_effort_rms",
+        "energy",
+        "total_reward",
+    ]
     grouped = df.groupby("policy")[numeric_cols].agg(["mean", "std"])
     grouped.columns = [f"{col}_{stat}" for col, stat in grouped.columns]
     fall_rate = df.groupby("policy")["fell"].mean().rename("fall_rate")
@@ -184,7 +194,9 @@ def main() -> None:
     parser.add_argument("--n-episodes", type=int, default=30)
     parser.add_argument("--ppo-log-dir", type=str, default="runs/ppo")
     parser.add_argument("--sac-log-dir", type=str, default="runs/sac")
-    parser.add_argument("--skip-rl", action="store_true", help="only evaluate the three non-adaptive baselines")
+    parser.add_argument(
+        "--skip-rl", action="store_true", help="only evaluate the three non-adaptive baselines"
+    )
     parser.add_argument("--output-dir", type=str, default="assets")
     args = parser.parse_args()
 

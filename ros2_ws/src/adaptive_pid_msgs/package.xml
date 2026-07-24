@@ -4,7 +4,7 @@
   <name>adaptive_pid_msgs</name>
   <version>0.1.0</version>
   <description>Custom ROS2 message definitions for the adaptive PID gain scheduling system: PIDGains, PlantState, TrainingStats.</description>
-  <maintainer email="engineer@example.com">Robotics Software Intern Candidate</maintainer>
+  <maintainer email="113280731+Ebyjoey@users.noreply.github.com">Aby Joseph</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

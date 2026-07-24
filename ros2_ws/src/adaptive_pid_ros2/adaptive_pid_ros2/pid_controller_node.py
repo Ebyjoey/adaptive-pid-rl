@@ -9,6 +9,8 @@ integral/derivative history (see ``PIDController.set_gains``).
 from __future__ import annotations
 
 import rclpy
+from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
+from adaptive_pid_msgs.msg import PlantState, TrainingStats
 from rclpy.node import Node
 from std_msgs.msg import Float64
 
@@ -16,8 +18,6 @@ from adaptive_pid.control.gain_scheduler import GainScheduler
 from adaptive_pid.control.pid import PIDController
 from adaptive_pid.utils.config import load_env_config
 from adaptive_pid.utils.types import PIDGains
-from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
-from adaptive_pid_msgs.msg import PlantState, TrainingStats
 
 DEFAULT_ENV_CONFIG = "configs/env/pendulum.yaml"
 
@@ -49,9 +49,7 @@ class PIDControllerNode(Node):
         self._control_pub = self.create_publisher(Float64, "/control_input", 10)
         self._stats_pub = self.create_publisher(TrainingStats, "/training_stats", 10)
 
-        self.get_logger().info(
-            f"pid_controller_node started with initial gains {initial_gains.as_array()}"
-        )
+        self.get_logger().info(f"pid_controller_node started with initial gains {initial_gains.as_array()}")
 
     def _on_reference(self, msg: Float64) -> None:
         self._latest_reference = msg.data

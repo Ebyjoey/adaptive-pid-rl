@@ -20,14 +20,14 @@ from adaptive_pid.utils.types import PIDGains
 
 @dataclass
 class ZieglerNicholsResult:
-    ku: float          # ultimate gain
-    tu: float          # ultimate period (s)
-    gains: PIDGains    # resulting PID gains
+    ku: float  # ultimate gain
+    tu: float  # ultimate period (s)
+    gains: PIDGains  # resulting PID gains
 
 
 # Standard Ziegler-Nichols "classic PID" lookup table.
 _KP_FACTOR = 0.6
-_TI_FACTOR = 0.5   # Ti = 0.5 * Tu  =>  Ki = Kp / Ti
+_TI_FACTOR = 0.5  # Ti = 0.5 * Tu  =>  Ki = Kp / Ti
 _TD_FACTOR = 0.125  # Td = 0.125 * Tu =>  Kd = Kp * Td
 
 

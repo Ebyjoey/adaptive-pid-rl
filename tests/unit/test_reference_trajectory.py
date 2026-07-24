@@ -27,7 +27,9 @@ class TestStepReference:
 
 class TestDoubletReference:
     def test_up_then_down(self):
-        traj = ReferenceTrajectory(ReferenceType.DOUBLET, amplitude=1.5, period=10.0, step_change_times=(1.0, 5.0))
+        traj = ReferenceTrajectory(
+            ReferenceType.DOUBLET, amplitude=1.5, period=10.0, step_change_times=(1.0, 5.0)
+        )
         r_pre, _ = traj.value_and_rate(0.5, dt=0.01)
         r_mid, _ = traj.value_and_rate(3.0, dt=0.01)
         r_post, _ = traj.value_and_rate(6.0, dt=0.01)
@@ -36,7 +38,9 @@ class TestDoubletReference:
         assert r_post == pytest.approx(0.0)
 
     def test_requires_two_step_change_times(self):
-        traj = ReferenceTrajectory(ReferenceType.DOUBLET, amplitude=1.0, period=10.0, step_change_times=(1.0,))
+        traj = ReferenceTrajectory(
+            ReferenceType.DOUBLET, amplitude=1.0, period=10.0, step_change_times=(1.0,)
+        )
         with pytest.raises(ValueError):
             traj.value_and_rate(2.0, dt=0.01)
 
@@ -88,5 +92,12 @@ class TestSampleReferenceTrajectory:
 
     def test_all_reference_kinds_are_reachable(self):
         rng = np.random.default_rng(0)
-        kinds_seen = {sample_reference_trajectory(rng, episode_seconds=5.0, max_amplitude=1.0).kind for _ in range(200)}
-        assert kinds_seen == {ReferenceType.STEP, ReferenceType.DOUBLET, ReferenceType.SINE_SWEEP, ReferenceType.RANDOM_WALK}
+        kinds_seen = {
+            sample_reference_trajectory(rng, episode_seconds=5.0, max_amplitude=1.0).kind for _ in range(200)
+        }
+        assert kinds_seen == {
+            ReferenceType.STEP,
+            ReferenceType.DOUBLET,
+            ReferenceType.SINE_SWEEP,
+            ReferenceType.RANDOM_WALK,
+        }

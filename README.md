@@ -1,5 +1,10 @@
 # Adaptive PID Gain Scheduling Using Deep Reinforcement Learning
 
+[![CI](https://github.com/Ebyjoey/adaptive-pid-rl/actions/workflows/ci.yml/badge.svg)](https://github.com/Ebyjoey/adaptive-pid-rl/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](pyproject.toml)
+[![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-261230.svg)](https://github.com/astral-sh/ruff)
+
 An RL agent that continuously adapts PID gains (Kp, Ki, Kd) online for an inverted pendulum whose dynamics change due to payload variation, friction, actuator degradation, sensor noise, and battery-voltage droop — benchmarked against fixed PID, manual tuning, and Ziegler–Nichols autotuning.
 
 **Built for:** a Robotics Software Intern portfolio, using ROS2 Humble, MuJoCo, Gymnasium, Stable-Baselines3, PyTorch, Docker, and GitHub Actions CI.
@@ -139,6 +144,15 @@ The seven nodes (`reference_node`, `plant_node`, `disturbance_node`, `pid_contro
 
 (Fixed PID and Ziegler–Nichols are identical by construction — see `docs/mdp_design.md` §6, the "fixed PID" baseline *is* the ZN-tuned gains, just never adapted.)
 
+<p align="center">
+  <img src="assets/plots/benchmark_fall_rate.png" alt="Fall rate comparison across all five controllers under domain randomization" width="600">
+</p>
+
+<p align="center">
+  <img src="assets/plots/sac_learning_curve.png" alt="SAC learning curve over training" width="410">
+  <img src="assets/plots/sac_gain_evolution.png" alt="SAC PID gain evolution during a held-out episode" width="410">
+</p>
+
 Plots generated from this run, in `assets/plots/`: `{ppo,sac}_learning_curve.png` (full training-run reward curves pulled from TensorBoard, spanning all resumed chunks), `{ppo,sac}_reward_terms.png` (per-term reward breakdown over training), `{ppo,sac}_gain_evolution.png` and `{ppo,sac}_tracking_response.png` (from real held-out rollouts), and `benchmark_{rmse,overshoot,energy,fall_rate}.png` (cross-policy comparison bars).
 
 **Two real findings came out of this run:**
@@ -177,4 +191,6 @@ This repository was built incrementally, module by module, with each module unit
 - Sim-to-real transfer onto an actual torque-controlled pendulum or servo testbed, using the ROS2 package as-is (its physics/control code is identical to the sim environment by construction).
 - Multi-objective / Pareto analysis across the reward weights, rather than a single fixed weighting.
 
+## 12. License
 
+MIT — see [`LICENSE`](LICENSE).

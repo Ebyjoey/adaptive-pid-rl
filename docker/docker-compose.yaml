@@ -3,11 +3,11 @@
 # ros2_ws/, etc.
 #
 # Usage (from the repository root):
-#   docker compose -f docker/docker-compose.yml build
-#   docker compose -f docker/docker-compose.yml run --rm adaptive-pid bash
-#   docker compose -f docker/docker-compose.yml run --rm adaptive-pid \
+#   docker compose -f docker/docker-compose.yaml build
+#   docker compose -f docker/docker-compose.yaml run --rm adaptive-pid bash
+#   docker compose -f docker/docker-compose.yaml run --rm adaptive-pid \
 #       python -m training.train_ppo --config configs/training/ppo.yaml
-#   docker compose -f docker/docker-compose.yml run --rm adaptive-pid \
+#   docker compose -f docker/docker-compose.yaml run --rm adaptive-pid \
 #       ros2 launch adaptive_pid_ros2 adaptive_pid_system.launch.py
 
 services:

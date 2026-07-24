@@ -23,7 +23,7 @@ class ReferenceTrajectory:
 
     kind: ReferenceType
     amplitude: float
-    period: float          # seconds, used by doublet/sine-sweep/random-walk
+    period: float  # seconds, used by doublet/sine-sweep/random-walk
     step_change_times: tuple[float, ...]  # times (s) at which a step-like discontinuity occurs
 
     def value_and_rate(self, t: float, dt: float) -> tuple[float, float]:
@@ -80,7 +80,12 @@ def sample_reference_trajectory(
     max_amplitude: float,
 ) -> ReferenceTrajectory:
     """Randomly sample a reference trajectory shape and parameters for one episode."""
-    kind_options = [ReferenceType.STEP, ReferenceType.DOUBLET, ReferenceType.SINE_SWEEP, ReferenceType.RANDOM_WALK]
+    kind_options = [
+        ReferenceType.STEP,
+        ReferenceType.DOUBLET,
+        ReferenceType.SINE_SWEEP,
+        ReferenceType.RANDOM_WALK,
+    ]
     # Select by integer index into a plain Python list, rather than
     # rng.choice(list_of_enum_members) directly: numpy silently coerces a
     # list of str-Enum members into a fixed-width string ndarray, which

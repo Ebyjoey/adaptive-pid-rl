@@ -136,7 +136,9 @@ class InvertedPendulumPlant:
             time=float(self._data.time),
         )
 
-    def get_noisy_observation(self, theta_noise_std: float, theta_dot_noise_std: float, rng: np.random.Generator) -> PlantState:
+    def get_noisy_observation(
+        self, theta_noise_std: float, theta_dot_noise_std: float, rng: np.random.Generator
+    ) -> PlantState:
         """Return the plant state corrupted by additive Gaussian sensor
         noise, representing real encoder/gyro quantization and noise floors.
         The *true* internal state is unaffected -- only what an observer

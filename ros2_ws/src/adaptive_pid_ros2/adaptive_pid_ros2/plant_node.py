@@ -11,13 +11,13 @@ from what the RL policy was trained against (docs/architecture.md Section 1).
 from __future__ import annotations
 
 import rclpy
+from adaptive_pid_msgs.msg import PlantState
 from rclpy.node import Node
 from std_msgs.msg import Float64
 
 from adaptive_pid.envs.pendulum_plant import InvertedPendulumPlant
 from adaptive_pid.estimation.disturbance_observer import DisturbanceObserver, DisturbanceObserverConfig
 from adaptive_pid.utils.config import load_env_config
-from adaptive_pid_msgs.msg import PlantState
 
 DEFAULT_ENV_CONFIG = "configs/env/pendulum.yaml"
 
@@ -67,7 +67,9 @@ class PlantNode(Node):
         state = self._plant.step(
             control_torque=self._latest_control_torque, disturbance_torque=self._latest_disturbance_torque
         )
-        self._observer.update(state.theta, state.theta_dot, self._latest_control_torque, self._env_config.dt_inner)
+        self._observer.update(
+            state.theta, state.theta_dot, self._latest_control_torque, self._env_config.dt_inner
+        )
 
         msg = PlantState()
         msg.header.stamp = self.get_clock().now().to_msg()

@@ -46,7 +46,9 @@ class DisturbanceNode(Node):
             msg = Float64()
             msg.data = event.torque
             self._disturbance_pub.publish(msg)
-            self.get_logger().debug(f"Injected disturbance torque {event.torque:.3f} N*m at t={elapsed_s:.2f}s")
+            self.get_logger().debug(
+                f"Injected disturbance torque {event.torque:.3f} N*m at t={elapsed_s:.2f}s"
+            )
 
 
 def main(args: list[str] | None = None) -> None:

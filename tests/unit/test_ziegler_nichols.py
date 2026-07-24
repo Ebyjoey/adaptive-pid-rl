@@ -46,9 +46,7 @@ class TestFindUltimateGain:
             freq = 2.0 + 0.05 * kp  # oscillation frequency also shifts with kp
             return np.exp(-decay * t) * np.sin(2 * np.pi * freq * t)
 
-        ku, tu = zn.find_ultimate_gain(
-            simulate, dt=dt, kp_search_range=(1.0, 40.0), kp_search_steps=40
-        )
+        ku, tu = zn.find_ultimate_gain(simulate, dt=dt, kp_search_range=(1.0, 40.0), kp_search_steps=40)
         assert 10.0 < ku < 30.0  # near the constructed sustained-oscillation point
         assert tu > 0.0
 

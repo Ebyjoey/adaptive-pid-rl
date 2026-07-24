@@ -1,5 +1,10 @@
 # Core numerical / RL stack
-numpy>=1.24,<2.0
+# numpy version intentionally unconstrained above the floor (matches
+# pyproject.toml's `numpy>=1.24`) -- verified against numpy 2.4.4 in CI/dev,
+# not just numpy 1.x. If a future numpy release breaks something downstream
+# (mujoco/gymnasium/stable-baselines3), pin an upper bound here *and* in
+# pyproject.toml together, with a comment explaining why.
+numpy>=1.24
 pyyaml>=6.0
 gymnasium>=0.29
 stable-baselines3>=2.2
@@ -10,8 +15,8 @@ mujoco>=3.1
 matplotlib>=3.7
 pandas>=2.0
 tensorboard>=2.14
-scipy>=1.11
 
-# Testing
+# Testing (included so `docker run ... pytest` works inside the same image
+# that runs training/evaluation -- see docker/Dockerfile)
 pytest>=7.4
 pytest-cov>=4.1

@@ -54,9 +54,9 @@ class PlantState:
     not physical plant state.
     """
 
-    theta: float          # rad, 0 = upright equilibrium
-    theta_dot: float       # rad/s
-    time: float = 0.0      # s, sim time since episode start
+    theta: float  # rad, 0 = upright equilibrium
+    theta_dot: float  # rad/s
+    time: float = 0.0  # s, sim time since episode start
 
 
 @dataclass
@@ -69,10 +69,10 @@ class PlantParams:
     "time-varying" in the docstring of that class.
     """
 
-    mass: float             # kg, pole mass (payload variation)
-    length: float           # m, pole length (center of mass distance)
-    damping: float          # N*m*s/rad, pivot viscous friction
-    gravity: float = 9.81   # m/s^2
+    mass: float  # kg, pole mass (payload variation)
+    length: float  # m, pole length (center of mass distance)
+    damping: float  # N*m*s/rad, pivot viscous friction
+    gravity: float = 9.81  # m/s^2
     actuator_gain: float = 1.0  # actuator degradation multiplier on torque, 1.0 = nominal
     inertia_extra: float = 0.0  # kg*m^2, added rotor/inertia term
 
@@ -87,11 +87,11 @@ class ControlLimits:
     ki_max: float
     kd_min: float
     kd_max: float
-    kp_rate_max: float   # max |dKp| per outer-loop step
+    kp_rate_max: float  # max |dKp| per outer-loop step
     ki_rate_max: float
     kd_rate_max: float
-    u_max: float          # N*m, actuator torque saturation
-    integral_max: float   # anti-windup clamp on integral error
+    u_max: float  # N*m, actuator torque saturation
+    integral_max: float  # anti-windup clamp on integral error
 
 
 @dataclass

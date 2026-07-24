@@ -17,13 +17,13 @@ from pathlib import Path
 
 import numpy as np
 import rclpy
+from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
+from adaptive_pid_msgs.msg import PlantState, TrainingStats
 from rclpy.node import Node
 from std_msgs.msg import Float64
 
 from adaptive_pid.control.gain_scheduler import GainScheduler
 from adaptive_pid.utils.config import load_env_config
-from adaptive_pid_msgs.msg import PIDGains as PIDGainsMsg
-from adaptive_pid_msgs.msg import PlantState, TrainingStats
 
 DEFAULT_ENV_CONFIG = "configs/env/pendulum.yaml"
 
@@ -104,7 +104,8 @@ class RLAgentNode(Node):
         dt = self._env_config.dt_inner
         candidate_integral = self._integral_error + error * dt
         self._integral_error = max(
-            -self._env_config.limits.integral_max, min(self._env_config.limits.integral_max, candidate_integral)
+            -self._env_config.limits.integral_max,
+            min(self._env_config.limits.integral_max, candidate_integral),
         )
         derivative_error = 0.0 if self._prev_error is None else (error - self._prev_error) / dt
         self._prev_error = error
@@ -122,9 +123,9 @@ class RLAgentNode(Node):
                 self._current_gains.kd,
                 self._latest_reference,
                 0.0,  # reference rate: not tracked cross-message here; a small
-                      # simplification versus the training env, acceptable
-                      # since Kp/Ki/Kd dominate the policy's response and this
-                      # feature mainly helps distinguish step-hold vs. ramp
+                # simplification versus the training env, acceptable
+                # since Kp/Ki/Kd dominate the policy's response and this
+                # feature mainly helps distinguish step-hold vs. ramp
                 1.0,  # progress: unknown in an indefinitely-running ROS2 deployment
             ],
             dtype=np.float32,

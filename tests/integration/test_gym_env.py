@@ -125,7 +125,9 @@ class TestStepContract:
                     break  # safety valve against a wiring bug causing an infinite loop
             if truncated and not terminated:
                 stable_count += 1
-        assert 1 <= stable_count <= 9  # neither "always stable" nor "always falls" -- both would indicate a wiring bug
+        assert (
+            1 <= stable_count <= 9
+        )  # neither "always stable" nor "always falls" -- both would indicate a wiring bug
 
     def test_reward_is_finite_every_step(self):
         env = make_env()
@@ -158,7 +160,9 @@ class TestStepContract:
         while not (terminated or truncated) and steps < 100:
             # Repeatedly slam Kp toward its minimum -- a near-zero-gain PID
             # on an unstable inverted pendulum should not be able to hold it up.
-            _obs, _reward, terminated, _truncated, _info = env.step(np.array([-1.0, 0.0, -1.0], dtype=np.float32))
+            _obs, _reward, terminated, _truncated, _info = env.step(
+                np.array([-1.0, 0.0, -1.0], dtype=np.float32)
+            )
             steps += 1
         assert terminated is True
 

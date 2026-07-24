@@ -105,9 +105,7 @@ class PIDController:
         self._state.prev_error = error
 
         u_unsaturated = (
-            self._gains.kp * error
-            + self._gains.ki * self._state.integral
-            + self._gains.kd * derivative
+            self._gains.kp * error + self._gains.ki * self._state.integral + self._gains.kd * derivative
         )
         u = max(-self._output_max, min(self._output_max, u_unsaturated))
 
