@@ -177,6 +177,4 @@ This repository was built incrementally, module by module, with each module unit
 - Sim-to-real transfer onto an actual torque-controlled pendulum or servo testbed, using the ROS2 package as-is (its physics/control code is identical to the sim environment by construction).
 - Multi-objective / Pareto analysis across the reward weights, rather than a single fixed weighting.
 
-## 12. License
 
-MIT — see [`LICENSE`](LICENSE).
