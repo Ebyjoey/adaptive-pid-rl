@@ -17,6 +17,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 # (EGL/osmesa) rendering mode; colcon/build tools for ros2_ws.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip \
+        python3-venv \
         python3-colcon-common-extensions \
         libgl1-mesa-glx \
         libosmesa6 \
@@ -39,6 +40,15 @@ ENV PATH="$VENV_PATH/bin:$PATH"
 COPY pyproject.toml /workspace/
 COPY src/ /workspace/src/
 RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    # CPU-only torch: an unconstrained `pip install torch` on Linux resolves
+    # the CUDA-enabled build, pulling several GB of NVIDIA wheels
+    # (nvidia-cublas, nvidia-cusparse, triton, ...) that this project never
+    # uses -- MuJoCo and Stable-Baselines3 both run CPU-only here. Installing
+    # the CPU wheel explicitly first means the later `pip install -e` (which
+    # also depends on torch>=2.1) is satisfied without pip re-resolving to
+    # the CUDA build, saving multiple GB of download and build time and
+    # avoiding a real risk of exhausting CI runner disk space.
+    pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -e /workspace
 
 COPY . /workspace/

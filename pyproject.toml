@@ -32,7 +32,7 @@ dev = [
     # rules and silently diverge between a contributor's machine and CI.
     # Bump both together, intentionally, and re-run `ruff format .` first.
     "ruff==0.16.0",
-    "mypy==2.3.0",
+    "mypy==1.14.1",
 ]
 
 [tool.setuptools]
