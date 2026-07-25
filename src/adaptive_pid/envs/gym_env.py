@@ -121,9 +121,7 @@ class GymPIDGainEnv(gym.Env):
         dt_outer = self._config.dt_inner * self._config.outer_loop_ratio
         previous_gains = self._pid.gains
         action_tuple = cast(tuple[float, float, float], tuple(float(a) for a in action))
-        new_gains = self._gain_scheduler.apply_action(
-            previous_gains, action_tuple, dt_outer
-        )
+        new_gains = self._gain_scheduler.apply_action(previous_gains, action_tuple, dt_outer)
         self._pid.set_gains(new_gains)
 
         total_reward = 0.0
