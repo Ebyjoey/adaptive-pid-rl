@@ -65,7 +65,14 @@ class RandomizationRanges:
             raise ValueError(
                 f"Unknown randomization key(s): {sorted(unknown)}. Valid keys: {sorted(valid_fields)}"
             )
-        converted = {k: (tuple(v) if isinstance(v, list) else v) for k, v in data.items()}
+        converted: dict[str, Any] = {}
+        for k, v in data.items():
+            if isinstance(v, list):
+                converted[k] = tuple(v)
+            elif k.endswith("_range") and isinstance(v, tuple) and len(v) == 2:
+                converted[k] = (float(v[0]), float(v[1]))
+            else:
+                converted[k] = v
         return cls(**converted)
 
 

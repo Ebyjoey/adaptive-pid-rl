@@ -24,7 +24,11 @@ class ConfigError(Exception):
 
 
 def _build_dataclass(cls: type[T], data: dict[str, Any], *, path: str) -> T:
-    field_names = {f.name for f in dataclasses.fields(cls)}
+    # Use a type guard to verify cls is a dataclass type
+    if not dataclasses.is_dataclass(cls):
+        raise ConfigError(f"Expected a dataclass type for section '{path}', got {cls}")
+    # mypy doesn't narrow the type after is_dataclass, use ignore
+    field_names = {f.name for f in dataclasses.fields(cls)}  # type: ignore[arg-type]
     unknown = set(data.keys()) - field_names
     if unknown:
         raise ConfigError(
@@ -33,15 +37,15 @@ def _build_dataclass(cls: type[T], data: dict[str, Any], *, path: str) -> T:
         )
     missing = {
         f.name
-        for f in dataclasses.fields(cls)
+        for f in dataclasses.fields(cls)  # type: ignore[arg-type]
         if f.default is dataclasses.MISSING
-        and f.default_factory is dataclasses.MISSING  # type: ignore[misc]
+        and f.default_factory is dataclasses.MISSING
         and f.name not in data
     }
     if missing:
         raise ConfigError(f"Missing required key(s) {sorted(missing)} in section '{path}' for {cls.__name__}")
     try:
-        return cls(**data)  # type: ignore[call-arg]
+        return cls(**data)  # type: ignore[return-value]
     except TypeError as exc:
         raise ConfigError(f"Failed to build {cls.__name__} from section '{path}': {exc}") from exc
 

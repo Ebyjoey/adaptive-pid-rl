@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 
@@ -109,7 +110,7 @@ def tune(ku: float, tu: float) -> PIDGains:
 def autotune(
     simulate_proportional_response: Callable[[float], np.ndarray],
     dt: float,
-    **search_kwargs: float,
+    **search_kwargs: Any,
 ) -> ZieglerNicholsResult:
     """Convenience wrapper: search for ``(Ku, Tu)`` and compute gains in one call."""
     ku, tu = find_ultimate_gain(simulate_proportional_response, dt, **search_kwargs)
