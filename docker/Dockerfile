@@ -15,9 +15,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 # MuJoCo needs a handful of rendering/GL libraries even in headless
 # (EGL/osmesa) rendering mode; colcon/build tools for ros2_ws.
+# python3-empy is required for ROS2 message generation (rosidl_adapter).
 RUN apt-get update && apt-get install -y --no-install-recommends \
         python3-pip \
         python3-venv \
+        python3-empy \
         python3-colcon-common-extensions \
         libgl1-mesa-glx \
         libosmesa6 \
