@@ -22,7 +22,7 @@ jobs:
           # this job on an otherwise-untouched codebase. Bump these
           # intentionally (and re-run `ruff format .` locally first) rather
           # than letting CI drift silently.
-          pip install ruff==0.16.0 mypy==2.3.0
+          pip install ruff==0.16.0 mypy==1.14.1
       - name: Ruff lint
         run: ruff check src/ training/ evaluation/ tests/ scripts/ ros2_ws/
       - name: Ruff format check

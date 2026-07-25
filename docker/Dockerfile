@@ -29,7 +29,8 @@ WORKDIR /workspace
 # layer, so that iterating on application code (copied below) doesn't bust
 # the dependency-install Docker layer cache on every rebuild.
 COPY pyproject.toml /workspace/
-RUN pip3 install --no-cache-dir -e /workspace
+RUN pip3 install --no-cache-dir --upgrade pip setuptools && \
+    pip3 install --no-cache-dir -e /workspace
 
 COPY . /workspace/
 RUN pip3 install --no-cache-dir -e /workspace
