@@ -29,13 +29,15 @@ WORKDIR /workspace
 # layer, so that iterating on application code (copied below) doesn't bust
 # the dependency-install Docker layer cache on every rebuild.
 # Copy pyproject.toml AND src/ so setuptools can find the package during editable install.
+# Use --break-system-packages because the base ROS image has some packages
+# (e.g., sympy) installed via distutils that pip cannot uninstall.
 COPY pyproject.toml /workspace/
 COPY src/ /workspace/src/
 RUN pip3 install --no-cache-dir --upgrade pip setuptools && \
-    pip3 install --no-cache-dir -e /workspace
+    pip3 install --no-cache-dir --break-system-packages -e /workspace
 
 COPY . /workspace/
-RUN pip3 install --no-cache-dir -e /workspace
+RUN pip3 install --no-cache-dir --break-system-packages -e /workspace
 
 # Build the ROS2 workspace (adaptive_pid_msgs + adaptive_pid_ros2), sourcing
 # the base ROS2 environment first as colcon build requires it.
