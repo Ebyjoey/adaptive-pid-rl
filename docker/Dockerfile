@@ -28,7 +28,9 @@ WORKDIR /workspace
 # Install the Python package (and its pinned dependencies) first, in its own
 # layer, so that iterating on application code (copied below) doesn't bust
 # the dependency-install Docker layer cache on every rebuild.
+# Copy pyproject.toml AND src/ so setuptools can find the package during editable install.
 COPY pyproject.toml /workspace/
+COPY src/ /workspace/src/
 RUN pip3 install --no-cache-dir --upgrade pip setuptools && \
     pip3 install --no-cache-dir -e /workspace
 
