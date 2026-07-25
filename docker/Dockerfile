@@ -10,7 +10,8 @@ FROM osrf/ros:humble-desktop AS base
 
 ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    VENV_PATH=/workspace/.venv
 
 # MuJoCo needs a handful of rendering/GL libraries even in headless
 # (EGL/osmesa) rendering mode; colcon/build tools for ros2_ws.
@@ -25,19 +26,23 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /workspace
 
+# Create a virtual environment to avoid conflicts with system packages
+# (the base ROS image has sympy/mpmath installed via distutils which pip
+# cannot uninstall).
+RUN python3 -m venv $VENV_PATH
+ENV PATH="$VENV_PATH/bin:$PATH"
+
 # Install the Python package (and its pinned dependencies) first, in its own
 # layer, so that iterating on application code (copied below) doesn't bust
 # the dependency-install Docker layer cache on every rebuild.
 # Copy pyproject.toml AND src/ so setuptools can find the package during editable install.
-# Use --break-system-packages because the base ROS image has some packages
-# (e.g., sympy) installed via distutils that pip cannot uninstall.
 COPY pyproject.toml /workspace/
 COPY src/ /workspace/src/
-RUN pip3 install --no-cache-dir --upgrade pip setuptools && \
-    pip3 install --no-cache-dir --break-system-packages -e /workspace
+RUN pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir -e /workspace
 
 COPY . /workspace/
-RUN pip3 install --no-cache-dir --break-system-packages -e /workspace
+RUN pip install --no-cache-dir -e /workspace
 
 # Build the ROS2 workspace (adaptive_pid_msgs + adaptive_pid_ros2), sourcing
 # the base ROS2 environment first as colcon build requires it.
@@ -47,8 +52,10 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
 
 # Source both the ROS2 base setup and this workspace's overlay on every
 # interactive shell / `docker run`, so `ros2 launch ...` works out of the box.
+# Also activate the Python venv.
 RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
-    echo "source /workspace/ros2_ws/install/setup.bash" >> /root/.bashrc
+    echo "source /workspace/ros2_ws/install/setup.bash" >> /root/.bashrc && \
+    echo "source $VENV_PATH/bin/activate" >> /root/.bashrc
 
-ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /workspace/ros2_ws/install/setup.bash && exec \"$@\"", "--"]
+ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /workspace/ros2_ws/install/setup.bash && source /workspace/.venv/bin/activate && exec \"$@\"", "--"]
 CMD ["/bin/bash"]
