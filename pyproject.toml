@@ -7,7 +7,7 @@ name = "adaptive-pid-rl"
 version = "0.1.0"
 description = "Adaptive PID Gain Scheduling Using Deep Reinforcement Learning"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "Aby Joseph" }]
 
@@ -36,10 +36,10 @@ dev = [
 ]
 
 [tool.setuptools]
-packages = ["adaptive_pid_rl"]
+packages = ["adaptive_pid"]
 
 [tool.setuptools.package-dir]
-"" = "src"
+"adaptive_pid" = "src/adaptive_pid"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
