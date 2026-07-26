@@ -12,7 +12,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from stable_baselines3.common.monitor import Monitor
-from stable_baselines3.common.vec_env import VecNormalize
+from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 from adaptive_pid.envs.gym_env import GymPIDGainEnv
 from adaptive_pid.utils.config import EnvConfig, load_env_config
@@ -53,10 +53,9 @@ def build_training_env(
     # VecEnv directly from per-index env_fns rather than via
     # make_vec_env(single_fn, n_envs=n), which would give every sub-env the
     # same seed.
-    from stable_baselines3.common.vec_env import DummyVecEnv
 
-    vec_env = DummyVecEnv(env_fns)
-    vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=norm_reward, clip_obs=10.0)
+    dummy_vec_env = DummyVecEnv(env_fns)
+    vec_env = VecNormalize(dummy_vec_env, norm_obs=True, norm_reward=norm_reward, clip_obs=10.0)
     return vec_env
 
 
@@ -70,13 +69,12 @@ def build_eval_env(
     inputs at evaluation time).
     """
     env_config = load_env_config(env_config_path)
-    from stable_baselines3.common.vec_env import DummyVecEnv
 
-    vec_env = DummyVecEnv([_make_single_env(env_config, seed=seed, monitor_dir=None)])
+    dummy_vec_env = DummyVecEnv([_make_single_env(env_config, seed=seed, monitor_dir=None)])
     if vecnormalize_stats_path is not None:
-        vec_env = VecNormalize.load(vecnormalize_stats_path, vec_env)
+        vec_env = VecNormalize.load(vecnormalize_stats_path, dummy_vec_env)
     else:
-        vec_env = VecNormalize(vec_env, norm_obs=True, norm_reward=False, clip_obs=10.0)
+        vec_env = VecNormalize(dummy_vec_env, norm_obs=True, norm_reward=False, clip_obs=10.0)
     vec_env.training = False
     vec_env.norm_reward = False
     return vec_env

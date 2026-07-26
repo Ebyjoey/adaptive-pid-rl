@@ -78,7 +78,7 @@ class RLAgentNode(Node):
         model_cls = {"ppo": PPO, "sac": SAC}.get(algo.lower())
         if model_cls is None:
             raise ValueError(f"Unknown algo '{algo}'; expected 'ppo' or 'sac'")
-        return model_cls.load(model_path)
+        return model_cls.load(model_path)  # type: ignore[attr-defined]
 
     @staticmethod
     def _load_obs_rms(vecnorm_path: str):
@@ -141,15 +141,21 @@ class RLAgentNode(Node):
             return  # no /state received yet
 
         action, _ = self._model.predict(obs, deterministic=True)
+        # action is shape (3,) -> cast to 3-tuple for GainScheduler.apply_action
+        action_tuple = (float(action[0]), float(action[1]), float(action[2]))
         self._current_gains = self._gain_scheduler.apply_action(
-            self._current_gains, tuple(float(a) for a in action), self._dt_outer
+            self._current_gains, action_tuple, self._dt_outer
         )
         self._publish_gains(self._current_gains)
 
+        # _latest_state is guaranteed non-None here because _build_observation
+        # would have returned None otherwise
+        state = self._latest_state
+        assert state is not None
         stats_msg = TrainingStats()
         stats_msg.header.stamp = self.get_clock().now().to_msg()
         stats_msg.source = "rl_agent_node"
-        stats_msg.tracking_error = self._latest_reference - self._latest_state.theta
+        stats_msg.tracking_error = self._latest_reference - state.theta
         stats_msg.reward = 0.0  # true reward requires the full shaped computation; omitted at deployment time
         stats_msg.kp, stats_msg.ki, stats_msg.kd = (
             self._current_gains.kp,

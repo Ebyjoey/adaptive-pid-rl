@@ -75,7 +75,7 @@ def try_load_sb3_policy(algo: str, log_dir: str) -> GainPolicy | None:
     from stable_baselines3 import PPO, SAC
 
     model_cls = {"ppo": PPO, "sac": SAC}[algo]
-    model = model_cls.load(str(model_path))
+    model = model_cls.load(str(model_path))  # type: ignore[attr-defined]
 
     obs_rms = None
     if vecnorm_path.exists():
