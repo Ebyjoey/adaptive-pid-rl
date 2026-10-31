@@ -45,7 +45,11 @@ ENV PATH="$VENV_PATH/bin:$PATH"
 # (which requires README.md as specified in pyproject.toml) and find the package.
 COPY pyproject.toml README.md /workspace/
 COPY src/ /workspace/src/
-RUN pip install --no-cache-dir --upgrade pip setuptools && \
+RUN pip install --no-cache-dir --upgrade pip && \
+    # ROS2 Humble's ament_cmake_python requires setuptools < 71.0.0: setuptools 71+
+    # introduced a breaking change passing strip_trailing_zero to canonicalize_version(),
+    # causing colcon build of ament_cmake_python/egg_info to fail with TypeError.
+    pip install --no-cache-dir "setuptools>=68.0.0,<71.0.0" "packaging>=22.0" wheel && \
     # CPU-only torch: an unconstrained `pip install torch` on Linux resolves
     # the CUDA-enabled build, pulling several GB of NVIDIA wheels
     # (nvidia-cublas, nvidia-cusparse, triton, ...) that this project never
